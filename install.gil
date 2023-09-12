@@ -1,0 +1,5 @@
+{
+    "DIR_MACRO": "NODE_UTILS_DIR",
+    "PROJECT_NAME": "nodeutils",
+    "BASHRC": "bashrc.sh"
+}
