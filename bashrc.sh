@@ -25,6 +25,6 @@ function npm-test-fz-it()
 	target_file=$(f "*test.js" ${target_dir} | default-fuzzy-finder)
 	target_test=$(grep -oP "it\(\s*\K'[^']*'|\"[^\"]*\"" ${target_file} | default-fuzzy-finder)
 	echo "Running $target_file"
-	npm test -- ${target_file} -t ${target_test}
+	npm test -- ${target_file} -t "${target_test}"
 }
 alias ntest-fz-it="npm-test-fz-it"
