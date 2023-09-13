@@ -1,7 +1,8 @@
 
 function node-fz()
 {
-	target_file=$(f "*.js" | default-fuzzy-finder)
+	target_dir=$1
+	target_file=$(f "*.js" ${target_dir} | default-fuzzy-finder)
 	echo "Running $target_file"
 	node ${target_file}
 }
