@@ -23,7 +23,7 @@ function npm-test-fz-it()
 {
 	target_dir=$1
 	target_file=$(f "*test.js" ${target_dir} | default-fuzzy-finder)
-	target_test=$(grep -oP "it\(\s*\K'[^']*'|\"[^\"]*\"" ${target_file} | default-fuzzy-finder)
+	target_test=$(grep -oP "it\(\s*\K'[^']*'|\"[^\"]*\"" "${target_file}" | sed 's/^["'\'']//; s/["'\'']$//' | default-fuzzy-finder)
 	echo "Running $target_file"
 	npm test -- ${target_file} -t "${target_test}"
 }
