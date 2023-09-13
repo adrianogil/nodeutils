@@ -38,7 +38,7 @@ function npm-test-fz-it()
     echo "Running test file $target_file"
     echo "Running test $target_test"
 
-    npm test -- ${target_file} -t '${target_test}'
+    npm test -- ${target_file} -t "${target_test}"
 }
 
 alias ntest-fz-it="npm-test-fz-it"
