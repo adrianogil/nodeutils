@@ -68,3 +68,23 @@ function node-summarize-project() {
 }
 
 alias nsummarize="node-summarize-project"
+
+
+function npm-run-fz() {
+    if [[ ! -f "package.json" ]]; then
+        echo "No package.json found in the current directory."
+        return 1
+    fi
+
+    # Extract script names from package.json using jq and pass them to fzf for interactive selection
+    local selected_script=$(jq -r '.scripts | keys[]' package.json | default-fuzzy-finder)
+
+    # If a script is selected (i.e., user doesn't cancel fzf), run it with npm
+    if [[ ! -z "$selected_script" ]]; then
+    	echo "Running $selected_script"
+        npm run $selected_script
+    else
+        echo "No script selected."
+    fi
+}
+alias nrun="npm-run-fz"
