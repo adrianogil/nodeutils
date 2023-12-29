@@ -12,6 +12,12 @@ function node-fz()
 }
 alias nfz="node-fz"
 
+function npm-test()
+{
+    npm install
+	npm test
+}
+alias ntest="npm-test"
 
 function npm-test-fz()
 {
