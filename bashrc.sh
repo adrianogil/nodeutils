@@ -1,4 +1,8 @@
 
+alias n="node"
+alias nv="node --version"
+
+
 function node-fz()
 {
 	target_dir=$1
@@ -23,7 +27,7 @@ function node-list-jest-tests() {
     echo "File not found: $1"
     return 1
   fi
-  
+
   # Extract lines that have 'it(' and get the test descriptions
   perl -ne 'while (/it\(\s*("[^"]*"|'\''[^'\'']*'\''|`[^`]*`)/g) { print "$1\n" }' "$1" | sed 's/^["'\'']//; s/["'\'']$//'
 }
