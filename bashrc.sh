@@ -1,5 +1,5 @@
 
-alias n="node"
+alias nd="node"
 alias nv="node --version"
 
 
