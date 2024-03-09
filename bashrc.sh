@@ -3,18 +3,25 @@ alias nd="node"
 alias nv="node --version"
 
 
+# Define a function to run a JavaScript file using Node.js with fuzzy file selection
 function node-fz()
 {
-	target_dir=$1
-	target_file=$(f "*.js" ${target_dir} | default-fuzzy-finder)
-	echo "Running $target_file"
-	node ${target_file}
+    target_dir=$1
+    target_file=$(f "*.js" ${target_dir} | default-fuzzy-finder)
+    echo "Running $target_file"
+    node ${target_file}
 }
 alias nfz="node-fz"
 
 function npm-test()
 {
+    # Use the correct version of Node.js for the project
+    nvm use
+
+    # Install dependencies
     npm install
+
+    # Run the tests
 	npm test
 }
 alias ntest="npm-test"
