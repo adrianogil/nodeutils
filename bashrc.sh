@@ -13,6 +13,16 @@ function node-fz()
 }
 alias nfz="node-fz"
 
+function node-project-find()
+{
+    target_dir=$1
+    if [[ -z "$target_dir" ]]; then
+        target_dir="."
+    fi
+    find ${target_dir} -name "package.json" -not -path "*/node_modules/*"
+}
+alias nproj-find="node-project-find"
+
 function npm-test()
 {
     # Use the correct version of Node.js for the project
