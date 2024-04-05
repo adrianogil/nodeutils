@@ -50,11 +50,13 @@ alias ntest-fz-it="npm-test-fz-it"
 function npm-test-all-subdirs()
 {
     # Run the tests in all subdirectories
-    for dir in $(find . -name "package.json" -not -path "*/node_modules/*" -execdir dirname {} \;); do
-        cd "$dir"
+    for package_json_path in $(find . -name "package.json" -not -path "*/node_modules/*"); do
+        # Extract the directory containing package.json
+        dir=$(dirname $package_json_path)
+
+        # Run the tests in that directory
         echo "Running tests in $dir"
-        npm-test
-        cd -
+        (cd $dir && npm-test)
     done
 }
 alias ntest-all="npm-test-all-subdirs"
