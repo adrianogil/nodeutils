@@ -1,3 +1,4 @@
+
 function npm-test()
 {
     # Use the correct version of Node.js for the project
@@ -45,3 +46,15 @@ function npm-test-fz-it()
 }
 
 alias ntest-fz-it="npm-test-fz-it"
+
+function npm-test-all-subdirs()
+{
+    # Run the tests in all subdirectories
+    for dir in $(find . -name "package.json" -not -path "*/node_modules/*" -execdir dirname {} \;); do
+        cd "$dir"
+        echo "Running tests in $dir"
+        npm-test
+        cd -
+    done
+}
+alias ntest-all="npm-test-all-subdirs"
