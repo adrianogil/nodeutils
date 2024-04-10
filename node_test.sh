@@ -16,11 +16,24 @@ function npm-test-fz()
 {
 	target_dir=$1
 	target_file=$(f "*test.js" ${target_dir} | default-fuzzy-finder)
+  current_date=$(date "+%Y-%m-%d")
+  echo $target_file >> /tmp/ntest.$current_date.log
+
 	echo "Running $target_file"
 
 	npm test -- ${target_file}
 }
 alias ntest-fz="npm-test-fz"
+
+function npm-test-last()
+{
+  current_date=$(date "+%Y-%m-%d")
+  last_test_file=$(cat /tmp/ntest.$current_date.log | default-fuzzy-finder)
+
+  echo "Running last test file $last_test_file"
+  npm test -- ${last_test_file}
+}
+alias ntest-last="npm-test-last"
 
 function node-list-jest-tests() {
   if [[ ! -f $1 ]]; then
