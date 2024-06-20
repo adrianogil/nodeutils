@@ -1,19 +1,31 @@
 
 function npm-test()
 {
-    # Use the correct version of Node.js for the project
-    nvm use
+  # Check if package.json exists
+  if [[ ! -f "package.json" ]]; then
+    echo "No package.json found in the current directory."
+    return 1
+  fi
 
-    # Install dependencies
-    npm install
+  # Use the correct version of Node.js for the project
+  nvm use
 
-    # Run the tests
+  # Install dependencies
+  npm install
+
+  # Run the tests
 	npm test
 }
 alias ntest="npm-test"
 
 function npm-test-fz()
 {
+  # Check if package.json exists
+  if [[ ! -f "package.json" ]]; then
+    echo "No package.json found in the current directory."
+    return 1
+  fi
+
 	target_dir=$1
 	target_file=$(f "*test.js" ${target_dir} | default-fuzzy-finder)
   current_date=$(date "+%Y-%m-%d")
@@ -46,8 +58,13 @@ function node-list-jest-tests() {
 }
 
 function npm-test-fz-it()
-
 {
+  # Check if package.json exists
+  if [[ ! -f "package.json" ]]; then
+    echo "No package.json found in the current directory."
+    return 1
+  fi
+
     target_dir=$1
     target_file=$(f "*test.js" ${target_dir} | default-fuzzy-finder)
     target_test=$(node-list-jest-tests ${target_file} | default-fuzzy-finder)
