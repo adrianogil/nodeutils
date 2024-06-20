@@ -1,6 +1,6 @@
 # NodeUtils
 
-A suite of Bash utilities tailored for Node.js developers, **NodeUtils** harnesses the power of fuzzy-finding to streamline and enhance your Node.js development workflow.
+A suite of Bash utilities for Node.js developers, **NodeUtils** make use of fuzzy-finding to enhance your Node.js development workflow.
 
 ## Table of Contents
 
@@ -22,8 +22,7 @@ A suite of Bash utilities tailored for Node.js developers, **NodeUtils** harness
 - [`jq`](https://stedolan.github.io/jq/) - Lightweight and flexible command-line JSON processor.
 
 Ensure these are installed and accessible from your shell.
-
-You should also define an alias for your preferred fuzzy finder. Here's an example using `fzf`:
+You should also define an `default-fuzzy-finder` alias for your preferred fuzzy finder. Here's an example using `fzf`:
 
 ```bash
 alias default-fuzzy-finder="fzf"
@@ -110,6 +109,5 @@ npm-run-fz
 ## Contribution
 
 Your contributions are welcome! Feel free to extend `nodeutils` by adding new commands or tweaking the existing ones. Ensure you test any changes to maintain the integrity of the utility.
-
 
 
