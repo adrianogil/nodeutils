@@ -1,6 +1,8 @@
 
 alias nd="node"
+alias nde='export NODE_ENV=$(echo -e "development\nstaging\nproduction" | default-fuzzy-finder) && node'
 alias nv="node --version"
+alias ni="npm install"
 
 # Define a function to run a JavaScript file using Node.js with fuzzy file selection
 function node-fz()
