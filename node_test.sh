@@ -77,28 +77,31 @@ function npm-test-fz-it()
 
 alias ntest-fz-it="npm-test-fz-it"
 
-function npm-test-all-subdirs()
-{
+function npm-test-all-subdirs() {
     local success_dirs=()
     local failure_dirs=()
+    declare -A dir_output
 
     # Find all package.json files and iterate over them
     for package_json_path in $(find . -name "package.json" -not -path "*/node_modules/*"); do
         # Extract the directory containing package.json
         local dir=$(dirname $package_json_path)
 
-        # Run the tests in that directory
+        # Run the tests in that directory and capture the output
         echo "Running tests in $dir"
-        (cd $dir && npm test > /dev/null 2>&1)
+        test_output=$(cd $dir && npm test 2>&1)
+        echo "$test_output"
 
         if [ $? -eq 0 ]; then
             success_dirs+=("$dir")
         else
             failure_dirs+=("$dir")
+            dir_output["$dir"]="$test_output"
         fi
     done
 
     # Summary of test results
+    echo ""
     echo "Summary of test results:"
     echo "------------------------"
     echo "Tests passed in the following directories:"
@@ -110,11 +113,16 @@ function npm-test-all-subdirs()
     echo "Tests failed in the following directories:"
     for dir in "${failure_dirs[@]}"; do
         echo "  - $dir"
+        echo "    Output:"
+        echo "${dir_output[$dir]}"
+        echo ""
     done
 
-    # Exit with status 1 if any tests failed
+    # Indicate if there were any failures
     if [ ${#failure_dirs[@]} -ne 0 ]; then
-        exit 1
+        echo "Some tests failed."
+    else
+        echo "All tests passed."
     fi
 }
 alias ntest-all="npm-test-all-subdirs"
