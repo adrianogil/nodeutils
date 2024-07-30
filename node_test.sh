@@ -93,7 +93,7 @@ function npm-test-all-subdirs() {
         local log_file="$temp_dir/$(basename "$dir").log"
 
         # Run the tests in that directory and log the output
-        echo "## Running tests in $dir"
+        echo "Running tests in $dir"
         (cd "$dir" && npm test | tee "$log_file")
         test_status=${PIPESTATUS[0]}
 
@@ -109,13 +109,13 @@ function npm-test-all-subdirs() {
     echo ""
     echo "Summary of test results:"
     echo "------------------------"
-    echo "## Tests passed in the following directories:"
+    echo "Tests passed in the following directories:"
     for dir in "${success_dirs[@]}"; do
         echo "  - $dir"
     done
 
     echo ""
-    echo "## Tests failed in the following directories:"
+    echo "Tests failed in the following directories:"
     for dir in "${failure_dirs[@]}"; do
         echo "  - $dir"
         echo "    Output:"
@@ -125,9 +125,10 @@ function npm-test-all-subdirs() {
 
     # Indicate if there were any failures
     if [ ${#failure_dirs[@]} -ne 0 ]; then
-        echo "> Some tests failed."
+        echo "Some tests failed."
     else
-        echo "> All tests passed."
+        echo "All tests passed."
     fi
 }
+
 alias ntest-all="npm-test-all-subdirs"
