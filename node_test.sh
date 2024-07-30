@@ -80,34 +80,30 @@ alias ntest-fz-it="npm-test-fz-it"
 function npm-test-all-subdirs() {
     local success_dirs=()
     local failure_dirs=()
-    declare -A dir_output_files
-
-    # Create a temporary directory to store logs
-    temp_dir=$(mktemp -d)
-    trap 'rm -rf "$temp_dir"' EXIT
+    declare -A dir_output
 
     # Find all package.json files and iterate over them
     for package_json_path in $(find . -name "package.json" -not -path "*/node_modules/*"); do
         # Extract the directory containing package.json
-        local dir=$(dirname "$package_json_path")
-        local log_file="$temp_dir/$(basename "$dir").log"
+        local dir=$(dirname $package_json_path)
 
-        # Run the tests in that directory and log the output
-        echo "Running tests in $dir"
-        (cd "$dir" && npm test | tee "$log_file")
-        test_status=${PIPESTATUS[0]}
+        # Run the tests in that directory and capture the output
+        echo "## Running tests in $dir"
+        test_output=$(cd $dir && npm test 2>&1)
+        test_status=$?
+        echo "$test_output"
 
         if [ $test_status -eq 0 ]; then
             success_dirs+=("$dir")
         else
             failure_dirs+=("$dir")
-            dir_output_files["$dir"]="$log_file"
+            dir_output["$dir"]="$test_output"
         fi
     done
 
     # Summary of test results
     echo ""
-    echo "Summary of test results:"
+    echo "## Summary of test results:"
     echo "------------------------"
     echo "Tests passed in the following directories:"
     for dir in "${success_dirs[@]}"; do
@@ -115,20 +111,20 @@ function npm-test-all-subdirs() {
     done
 
     echo ""
-    echo "Tests failed in the following directories:"
+    echo "## Tests failed in the following directories:"
     for dir in "${failure_dirs[@]}"; do
         echo "  - $dir"
-        echo "    Output:"
-        cat "${dir_output_files[$dir]}"
+        echo ">>  Output:"
+        echo "${dir_output[$dir]}"
+        echo ">> Failed test from $dir"
         echo ""
     done
 
     # Indicate if there were any failures
     if [ ${#failure_dirs[@]} -ne 0 ]; then
-        echo "Some tests failed."
+        echo "> Some tests failed."
     else
-        echo "All tests passed."
+        echo "> All tests passed."
     fi
 }
-
 alias ntest-all="npm-test-all-subdirs"
