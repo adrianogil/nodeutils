@@ -109,8 +109,6 @@ function npm-test-all-subdirs() {
 
     # Indicate if there were any failures
     if [ ${#failure_dirs[@]} -ne 0 ]; then
-      echo "> Some tests failed."
-
       echo ""
       echo "## Tests failed in the following directories:"
       for dir in "${failure_dirs[@]}"; do
