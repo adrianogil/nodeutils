@@ -90,9 +90,10 @@ function npm-test-all-subdirs() {
         # Run the tests in that directory and capture the output
         echo "Running tests in $dir"
         test_output=$(cd $dir && npm test 2>&1)
+        test_status=$?
         echo "$test_output"
 
-        if [ $? -eq 0 ]; then
+        if [ $test_status -eq 0 ]; then
             success_dirs+=("$dir")
         else
             failure_dirs+=("$dir")
