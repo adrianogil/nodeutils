@@ -88,7 +88,7 @@ function npm-test-all-subdirs() {
 
         # Run the tests in that directory and capture the output
         echo "## Running tests in $dir"
-        cd $dir && npm test
+        (cd $dir && npm-test)
         test_status=$?
 
         if [ $test_status -eq 0 ]; then
