@@ -69,4 +69,6 @@ function npm-run-fz() {
 }
 alias nrun="npm-run-fz"
 
+alias node-install-from-requires="python3 ${NODE_UTILS_DIR}/python/install_all_modules.py"
+
 source ${NODE_UTILS_DIR}/node_test.sh
