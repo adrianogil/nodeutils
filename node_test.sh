@@ -7,6 +7,11 @@ function npm-test()
     return 1
   fi
 
+  target_test_command=$1
+  if [[ -z "$target_test_command" ]]; then
+    target_test_command="test"
+  fi
+
   # Use the correct version of Node.js for the project
   nvm use
 
@@ -14,7 +19,7 @@ function npm-test()
   npm install
 
   # Run the tests
-	npm test
+	npm run ${target_test_command}
 }
 alias ntest="npm-test"
 
