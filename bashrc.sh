@@ -72,3 +72,13 @@ alias nrun="npm-run-fz"
 alias node-install-from-requires="python3 ${NODE_UTILS_DIR}/python/nodeutils/install_all_modules.py"
 
 source ${NODE_UTILS_DIR}/node_test.sh
+
+function npm-pkg-version-latest() {
+    local package_name=$1
+    if [[ -z "$package_name" ]]; then
+        # List all packages from package.json and select one using fzf
+        package_name=$(jq -r '.dependencies, .devDependencies | keys[]' package.json | default-fuzzy-finder)
+    fi
+    local latest_version=$(npm view $package_name version)
+    echo "Latest version of $package_name: $latest_version"
+}
