@@ -25,21 +25,28 @@ alias ntest="npm-test"
 
 function npm-test-fz()
 {
-  # Check if package.json exists
-  if [[ ! -f "package.json" ]]; then
-    echo "No package.json found in the current directory."
-    return 1
-  fi
+    # Check if package.json exists
+    if [[ ! -f "package.json" ]]; then
+        echo "No package.json found in the current directory."
+        return 1
+    fi
 
-	target_dir=$1
-	target_file=$(f "*test.js" ${target_dir} | default-fuzzy-finder)
-  current_date=$(date "+%Y-%m-%d")
-  echo $target_file >> /tmp/ntest.$current_date.log
+    target_dir=$1
+    # Use find to exclude node_modules and pass the result to the fuzzy finder
+    target_file=$(find ${target_dir:-.} -type f -name "*test.js" -not -path "*/node_modules/*" | default-fuzzy-finder)
 
-	echo "Running $target_file"
+    if [[ -z $target_file ]]; then
+        echo "No test file selected."
+        return 1
+    fi
 
-	npm test -- ${target_file}
+    current_date=$(date "+%Y-%m-%d")
+    echo $target_file >> /tmp/ntest.$current_date.log
+
+    echo "Running $target_file"
+    npm test -- ${target_file}
 }
+
 alias ntest-fz="npm-test-fz"
 
 function npm-test-last()
@@ -65,21 +72,32 @@ function node-list-jest-tests() {
 function npm-test-fz-it()
 {
   # Check if package.json exists
-  if [[ ! -f "package.json" ]]; then
-    echo "No package.json found in the current directory."
-    return 1
-  fi
+    if [[ ! -f "package.json" ]]; then
+        echo "No package.json found in the current directory."
+        return 1
+    fi
 
-    target_dir=$1
-    target_file=$(f "*test.js" ${target_dir} | default-fuzzy-finder)
-    target_test=$(node-list-jest-tests ${target_file} | default-fuzzy-finder)
+    target_dir=${1:-.}
+    # Use find to exclude node_modules and pass the result to the fuzzy finder
+    target_file=$(find "$target_dir" -type f -name "*test.js" -not -path "*/node_modules/*" | default-fuzzy-finder)
 
-    echo "Running test file $target_file"
-    echo "Running test $target_test"
+    if [[ -z $target_file ]]; then
+        echo "No test file selected."
+        return 1
+    fi
 
-    npm test -- ${target_file} -t "${target_test}"
+    target_test=$(node-list-jest-tests "$target_file" | default-fuzzy-finder)
+
+    if [[ -z $target_test ]]; then
+        echo "No specific test selected."
+        return 1
+    fi
+
+    echo "Running test file: $target_file"
+    echo "Running test: $target_test"
+
+    npm test -- "$target_file" -t "$target_test"
 }
-
 alias ntest-fz-it="npm-test-fz-it"
 
 function npm-test-all-subdirs() {
