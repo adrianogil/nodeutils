@@ -107,7 +107,7 @@ function npm-test-all-subdirs() {
     echo ""
     echo "## Summary of test results:"
     echo "------------------------"
-    echo "Tests passed in the following directories:"
+    echo "### Tests passed in the following directories:"
     for dir in "${success_dirs[@]}"; do
         echo "  - $dir"
     done
@@ -115,18 +115,12 @@ function npm-test-all-subdirs() {
     # Indicate if there were any failures
     if [ ${#failure_dirs[@]} -ne 0 ]; then
       echo ""
-      echo "## Tests failed in the following directories:"
+      echo "### Tests failed in the following directories:"
       for dir in "${failure_dirs[@]}"; do
           echo "  - $dir"
       done
     else
         echo "> All tests passed."
     fi
-
-
-
-
-
-
 }
 alias ntest-all="npm-test-all-subdirs"
