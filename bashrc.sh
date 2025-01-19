@@ -98,3 +98,16 @@ function npm-pkg-version-latest() {
     local latest_version=$(npm view $package_name version)
     echo "Latest version of $package_name: $latest_version"
 }
+
+function node-save-nvmrc() {
+    local current_version
+    current_version=$(node -v) # Get the current Node.js version
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Node.js is not installed or not available in your PATH."
+        return 1
+    fi
+    # Strip the 'v' from the version string
+    echo "${current_version#v}" > .nvmrc
+    echo "Saved Node.js version ${current_version#v} to .nvmrc."
+}
+alias nsave-nvmrc="node-save-nvmrc"
