@@ -4,6 +4,22 @@ alias nde='export NODE_ENV=$(echo -e "development\nstaging\nproduction" | defaul
 alias nv="node --version"
 alias ni="npm install"
 
+# select a installed node version using fuzzy search
+function nvm-use-fz() {
+    local selected_version
+    # List installed Node.js versions managed by NVM, excluding 'system' and aliases
+    selected_version=$(nvm list --no-alias --no-colors | grep -E '^\s*v[0-9]+\.[0-9]+\.[0-9]+' | default-fuzzy-finder | awk '{print $1}')
+
+    echo "Selected Node.js version: $selected_version"
+
+    if [[ -n "$selected_version" ]]; then
+        nvm use "$selected_version"
+    else
+        echo "No version selected."
+    fi
+}
+alias nuse="nvm-use-fz"
+
 # Define a function to run a JavaScript file using Node.js with fuzzy file selection
 function node-fz()
 {
