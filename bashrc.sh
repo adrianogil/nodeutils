@@ -3,6 +3,7 @@ alias nd="node"
 alias nde='export NODE_ENV=$(echo -e "development\nstaging\nproduction" | default-fuzzy-finder) && node'
 alias nv="node --version"
 alias ni="npm install"
+alias nid="npm install --save-dev"
 
 # select a installed node version using fuzzy search
 function nvm-use-fz() {
@@ -20,14 +21,27 @@ function nvm-use-fz() {
 }
 alias nuse="nvm-use-fz"
 
-# Define a function to run a JavaScript file using Node.js with fuzzy file selection
-function node-fz()
-{
-    target_dir=$1
-    target_file=$(f "*.js" ${target_dir} | default-fuzzy-finder)
-    echo "Running $target_file"
-    node ${target_file}
+
+function node-fz() {
+    # Define a function to run a JavaScript file using Node.js with fuzzy file selection
+    # Search for .js files, ignore node_modules/, let you pick one, then run it with Node
+    local target_dir="${1:-.}"
+
+    # Build the list, exclude node_modules at any depth, send to your picker
+    local target_file
+    target_file=$(find "$target_dir" \
+                    -type f -name '*.js' \
+                    -not -path '*/node_modules/*' \
+                    -print | default-fuzzy-finder)
+
+    if [[ -n "$target_file" ]]; then
+        echo "Running $target_file"
+        node "$target_file"
+    else
+        echo "No file selected."
+    fi
 }
+
 alias nfz="node-fz"
 
 function node-project-find()
