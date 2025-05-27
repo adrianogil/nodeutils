@@ -19,7 +19,7 @@ function npm-test()
   npm install
 
   # Run the tests
-	npm run ${target_test_command}
+    npm run ${target_test_command}
 }
 alias ntest="npm-test"
 
@@ -142,3 +142,47 @@ function npm-test-all-subdirs() {
     fi
 }
 alias ntest-all="npm-test-all-subdirs"
+
+npm-test-plot-tests-through-time() {
+  local BRANCH=HEAD
+  # 1st arg = start commit; else repo’s very first first-parent commit
+  local START="${1:-$(git rev-list --max-parents=0 --first-parent "$BRANCH" | tail -n1)}"
+  local JEST_BIN="node_modules/.bin/jest"
+  local OUT_FILE="jest_test_counts.csv"
+
+  echo "Counting tests from $(git rev-parse --short "$START") → $BRANCH"
+
+  git rev-list --reverse --first-parent "${START}..${BRANCH}" | while read -r commit; do
+    echo "→ checkout $commit"
+    git checkout -q "$commit" || continue
+
+    # skip if not a Node project
+    [ -f package.json ] || continue
+
+    local COMMIT_DATE
+    COMMIT_DATE=$(git show -s --format=%ci "$commit")
+
+    echo "   running jest…"
+    # ignore any local jest.config.js, dump JSON only
+    "$JEST_BIN" \
+      --config '{}' \
+      --json \
+      --outputFile=jest.json \
+      --passWithNoTests \
+      >/dev/null 2>&1
+
+    local COUNT
+    COUNT=$(jq '.numTotalTests' jest.json)
+    echo "${COMMIT_DATE},${COUNT}" >> "$OUT_FILE"
+  done
+
+  git checkout -q "$BRANCH"
+
+  printf "Finished: wrote %s (from %s to %s)\n" \
+    "$OUT_FILE" \
+    "$(git rev-parse --short "$START")" \
+    "$(git rev-parse --short "$BRANCH")"
+
+  python3 "$NODE_UTILS_DIR/python/nodeutils/plot_jest_test_history.py"
+}
+
