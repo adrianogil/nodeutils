@@ -1,9 +1,12 @@
 
 alias nd="node"
-alias nde='export NODE_ENV=$(echo -e "development\nstaging\nproduction" | default-fuzzy-finder) && node'
+alias nde='export NODE_ENV=$(echo -e "development\nstaging\nbeta\nproduction" | default-fuzzy-finder) && node'
 alias nv="node --version"
 alias ni="npm install"
 alias nid="npm install --save-dev"
+alias nu="nvm use"
+alias nat="npm audit"
+alias natx="npm audit fix"
 
 # select a installed node version using fuzzy search
 function nvm-use-fz() {
