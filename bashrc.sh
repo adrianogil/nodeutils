@@ -128,3 +128,16 @@ function node-save-nvmrc() {
     echo "Saved Node.js version ${current_version#v} to .nvmrc."
 }
 alias nsave-nvmrc="node-save-nvmrc"
+
+function npm-outdated-fz() {
+  # List outdated packages
+  outdated=$(npm outdated --parseable --depth=0 | cut -d: -f4)
+  pkg=$(echo "$outdated" | default-fuzzy-finder)
+  if [[ -z "$pkg" ]]; then
+    echo "No package selected."
+    return 1
+  fi
+  echo "Upgrading $pkg…"
+  npm install "$pkg@latest"
+}
+alias nup-fz="npm-outdated-fz"
