@@ -1,24 +1,40 @@
 
 function npm-test()
 {
-  # Check if package.json exists
-  if [[ ! -f "package.json" ]]; then
-    echo "No package.json found in the current directory."
-    return 1
-  fi
+    target_test_command=$1
+    if [[ -z "$target_test_command" ]]; then
+        target_test_command="test"
+    fi
 
-  target_test_command=$1
-  if [[ -z "$target_test_command" ]]; then
-    target_test_command="test"
-  fi
+    # Check if package.json exists
+    if [[ ! -f "package.json" ]]; then
+        echo "No package.json found in the current directory."
 
-  # Use the correct version of Node.js for the project
-  nvm use
+        # check if there is a child directory with package.json
+        local child_with_package_json
+        child_with_package_json=$(find . -maxdepth 2 -type f -name "package.json" -not -path "*/node_modules/*" | head -n 1)
 
-  # Install dependencies
-  npm install
+        if [[ -n "$child_with_package_json" ]]; then
+            local child_dir
 
-  # Run the tests
+            child_dir=$(dirname "$child_with_package_json")
+            echo "Found package.json in child directory: $child_dir"
+
+            echo "Changing to that directory and running npm-test there."
+            (cd "$child_dir" && npm-test "$target_test_command")
+
+            return $?
+        fi
+        return 1
+    fi
+
+    # Use the correct version of Node.js for the project
+    nvm use
+
+    # Install dependencies
+    npm install
+
+    # Run the tests
     npm run ${target_test_command}
 }
 alias ntest="npm-test"
