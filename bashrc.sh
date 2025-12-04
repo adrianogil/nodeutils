@@ -24,11 +24,31 @@ function nvm-use-fz() {
 }
 alias nuse="nvm-use-fz"
 
-
 function node-fz() {
     # Define a function to run a JavaScript file using Node.js with fuzzy file selection
     # Search for .js files, ignore node_modules/, let you pick one, then run it with Node
-    local target_dir="${1:-.}"
+    # Usage:
+    #   node-fz                 # fuzzy-pick .js in current dir, no args
+    #   node-fz src             # fuzzy-pick in ./src, no args
+    #   node-fz -- --flag 123   # current dir, pass --flag 123 to script
+    #   node-fz src -- arg1 42  # ./src, pass arg1 42 to script
+
+    local target_dir="."
+    local script_args=()
+
+    # If first arg is a directory, treat it as search root
+    if [[ $# -gt 0 && -d "$1" ]]; then
+        target_dir="$1"
+        shift
+    fi
+
+    # Support `--` as separator, but it's optional.
+    if [[ $# -gt 0 ]]; then
+        if [[ "$1" == "--" ]]; then
+            shift
+        fi
+        script_args=("$@")
+    fi
 
     # Build the list, exclude node_modules at any depth, send to your picker
     local target_file
@@ -38,13 +58,12 @@ function node-fz() {
                     -print | default-fuzzy-finder)
 
     if [[ -n "$target_file" ]]; then
-        echo "Running $target_file"
-        node "$target_file"
+        echo "Running $target_file ${script_args[*]}"
+        node "$target_file" "${script_args[@]}"
     else
         echo "No file selected."
     fi
 }
-
 alias nfz="node-fz"
 
 function node-project-find()
