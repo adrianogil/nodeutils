@@ -141,3 +141,12 @@ function npm-outdated-fz() {
   npm install "$pkg@latest"
 }
 alias nup-fz="npm-outdated-fz"
+
+function npm-dep-tree() {
+    target_package=$1
+    if [[ -z "$target_package" ]]; then
+        target_package=$(jq -r '.dependencies, .devDependencies | keys[]' package.json | default-fuzzy-finder)
+    fi
+    npm ls "$target_package" --depth=10
+}
+alias ndep="npm-dep-tree"
