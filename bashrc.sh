@@ -169,3 +169,35 @@ function npm-dep-tree() {
     npm ls "$target_package" --depth=10
 }
 alias ndep="npm-dep-tree"
+
+function npm-ls-fz() {
+    local target_package=$1
+    if [[ -z "$target_package" ]]; then
+        if [[ ! -d "node_modules" ]]; then
+            echo "No node_modules directory found."
+            return 1
+        fi
+
+        target_package=$(
+            find node_modules -mindepth 2 -maxdepth 3 -name package.json 2>/dev/null | while read -r pkgjson; do
+                if [[ "$pkgjson" == *"/node_modules/@"/"*"/"package.json" ]]; then
+                    local scope
+                    local name
+                    scope=$(basename "$(dirname "$(dirname "$pkgjson")")")
+                    name=$(basename "$(dirname "$pkgjson")")
+                    echo "${scope}/${name}"
+                else
+                    basename "$(dirname "$pkgjson")"
+                fi
+            done | sort -u | default-fuzzy-finder
+        )
+    fi
+
+    if [[ -z "$target_package" ]]; then
+        echo "No package selected."
+        return 1
+    fi
+
+    npm ls "$target_package"
+}
+alias nls="npm-ls-fz"
