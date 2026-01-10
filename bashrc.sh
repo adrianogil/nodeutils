@@ -169,3 +169,16 @@ function npm-dep-tree() {
     npm ls "$target_package" --depth=10
 }
 alias ndep="npm-dep-tree"
+
+function npm-ls-fz() {
+    local target_package
+    target_package=$(npm ls --parseable --depth=0 2>/dev/null | tail -n +2 | xargs -n1 basename | default-fuzzy-finder)
+
+    if [[ -z "$target_package" ]]; then
+        echo "No package selected."
+        return 1
+    fi
+
+    npm ls "$target_package"
+}
+alias nls="npm-ls-fz"
