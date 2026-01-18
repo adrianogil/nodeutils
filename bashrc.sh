@@ -113,21 +113,32 @@ function node-deps-summary() {
     local deps_count
     local dev_deps_count
     local node_modules_size
+    local direct_total
+    local installed_total
 
     deps_list=$(jq -r '(.dependencies // {}) | keys[]' package.json)
     dev_deps_list=$(jq -r '(.devDependencies // {}) | keys[]' package.json)
     deps_count=$(jq -r '(.dependencies // {}) | keys | length' package.json)
     dev_deps_count=$(jq -r '(.devDependencies // {}) | keys | length' package.json)
+    direct_total=$((deps_count + dev_deps_count))
 
     if [[ -d "node_modules" ]]; then
         node_modules_size=$(du -sh node_modules 2>/dev/null | awk '{print $1}')
+        if command -v npm >/dev/null 2>&1; then
+            installed_total=$(npm ls --all --parseable 2>/dev/null | tail -n +2 | wc -l)
+        else
+            installed_total="npm not found"
+        fi
     else
         node_modules_size="node_modules not found"
+        installed_total="node_modules not found"
     fi
 
     echo "Node.js Dependencies Summary:"
     echo "-----------------------------"
     echo "node_modules size: ${node_modules_size}"
+    echo "total direct packages: ${direct_total}"
+    echo "total installed packages: ${installed_total}"
     echo
     echo "Dependencies (${deps_count}):"
     if [[ -n "$deps_list" ]]; then
