@@ -247,3 +247,30 @@ function npm-ls-fz() {
     npm ls "$target_package"
 }
 alias nls="npm-ls-fz"
+
+# node-tools node-modules-clean: Recursively remove node_modules directories
+function node-modules-clean() {
+    local target_dir="${1:-.}"
+
+    if [[ ! -d "$target_dir" ]]; then
+        echo "Directory not found: $target_dir"
+        return 1
+    fi
+
+    local -a module_dirs=()
+    while IFS= read -r -d '' module_dir; do
+        module_dirs+=("$module_dir")
+    done < <(find "$target_dir" -type d -name "node_modules" -prune -print0)
+
+    if [[ ${#module_dirs[@]} -eq 0 ]]; then
+        echo "No node_modules directories found under $target_dir."
+        return 0
+    fi
+
+    echo "Deleting ${#module_dirs[@]} node_modules directories under $target_dir..."
+    for module_dir in "${module_dirs[@]}"; do
+        rm -r "$module_dir"
+    done
+    echo "Done."
+}
+alias nclean-modules="node-modules-clean"
