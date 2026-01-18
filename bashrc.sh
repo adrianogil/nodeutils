@@ -108,16 +108,12 @@ function node-deps-summary() {
         return 1
     fi
 
-    local deps_list
-    local dev_deps_list
     local deps_count
     local dev_deps_count
     local node_modules_size
     local direct_total
     local installed_total
 
-    deps_list=$(jq -r '(.dependencies // {}) | keys[]' package.json)
-    dev_deps_list=$(jq -r '(.devDependencies // {}) | keys[]' package.json)
     deps_count=$(jq -r '(.dependencies // {}) | keys | length' package.json)
     dev_deps_count=$(jq -r '(.devDependencies // {}) | keys | length' package.json)
     direct_total=$((deps_count + dev_deps_count))
@@ -139,20 +135,8 @@ function node-deps-summary() {
     echo "node_modules size: ${node_modules_size}"
     echo "total direct packages: ${direct_total}"
     echo "total installed packages: ${installed_total}"
-    echo
-    echo "Dependencies (${deps_count}):"
-    if [[ -n "$deps_list" ]]; then
-        echo "$deps_list"
-    else
-        echo "(none)"
-    fi
-    echo
-    echo "Dev Dependencies (${dev_deps_count}):"
-    if [[ -n "$dev_deps_list" ]]; then
-        echo "$dev_deps_list"
-    else
-        echo "(none)"
-    fi
+    echo "dependencies count: ${deps_count}"
+    echo "dev dependencies count: ${dev_deps_count}"
 }
 alias ndeps-summary="node-deps-summary"
 
