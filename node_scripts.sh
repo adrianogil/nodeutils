@@ -269,6 +269,7 @@ function node-modules-clean() {
 
     echo "Deleting ${#module_dirs[@]} node_modules directories under $target_dir..."
     for module_dir in "${module_dirs[@]}"; do
+        echo "Deleting ${module_dir}"
         rm -r "$module_dir"
     done
     echo "Done."
