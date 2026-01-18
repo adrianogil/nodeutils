@@ -102,6 +102,49 @@ function node-summarize-project() {
 
 alias nsummarize="node-summarize-project"
 
+function node-deps-summary() {
+    if [[ ! -f "package.json" ]]; then
+        echo "This doesn't seem to be a Node.js project (no package.json found)."
+        return 1
+    fi
+
+    local deps_list
+    local dev_deps_list
+    local deps_count
+    local dev_deps_count
+    local node_modules_size
+
+    deps_list=$(jq -r '(.dependencies // {}) | keys[]' package.json)
+    dev_deps_list=$(jq -r '(.devDependencies // {}) | keys[]' package.json)
+    deps_count=$(jq -r '(.dependencies // {}) | keys | length' package.json)
+    dev_deps_count=$(jq -r '(.devDependencies // {}) | keys | length' package.json)
+
+    if [[ -d "node_modules" ]]; then
+        node_modules_size=$(du -sh node_modules 2>/dev/null | awk '{print $1}')
+    else
+        node_modules_size="node_modules not found"
+    fi
+
+    echo "Node.js Dependencies Summary:"
+    echo "-----------------------------"
+    echo "node_modules size: ${node_modules_size}"
+    echo
+    echo "Dependencies (${deps_count}):"
+    if [[ -n "$deps_list" ]]; then
+        echo "$deps_list"
+    else
+        echo "(none)"
+    fi
+    echo
+    echo "Dev Dependencies (${dev_deps_count}):"
+    if [[ -n "$dev_deps_list" ]]; then
+        echo "$dev_deps_list"
+    else
+        echo "(none)"
+    fi
+}
+alias ndeps-summary="node-deps-summary"
+
 function npm-run-fz() {
     if [[ ! -f "package.json" ]]; then
         echo "No package.json found in the current directory."
