@@ -13,6 +13,7 @@ A suite of Bash utilities for Node.js developers, **NodeUtils** make use of fuzz
     - [Run Specific Jest Test](#run-specific-jest-test)
     - [Summarize Node.js Project](#summarize-nodejs-project)
     - [Run Script from package.json](#run-script-from-packagejson)
+    - [Serve a Local File over HTTP](#serve-a-local-file-over-http)
 - [Usage Notes](#usage-notes)
 - [Contribution](#contribution)
 
@@ -101,6 +102,19 @@ npm-run-fz
 - Fuzzy-finding interface to select and run a script from `package.json`.
 - Alias: `nrun`
 
+### Serve a Local File over HTTP
+
+Invoke with:
+
+```bash
+node-serve-file [file-path] [port]
+```
+
+- Serves a single local file over HTTP using Node.js.
+- Defaults to `custom_html.html` when no file path is provided.
+- Defaults to port `8080` when no port is provided.
+- Alias: `nserve-file`
+
 ## Usage Notes
 
 - For most functions, you can provide a directory as an argument. If no directory is provided, the current directory is used.
@@ -109,5 +123,4 @@ npm-run-fz
 ## Contribution
 
 Your contributions are welcome! Feel free to extend `nodeutils` by adding new commands or tweaking the existing ones. Ensure you test any changes to maintain the integrity of the utility.
-
 

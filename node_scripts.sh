@@ -275,3 +275,17 @@ function node-modules-clean() {
     echo "Done."
 }
 alias nclean-modules="node-modules-clean"
+
+# node-tools node-serve-file: Serve a local file over HTTP using Node.js
+function node-serve-file() {
+    local file_path="${1:-custom_html.html}"
+    local port="${2:-8080}"
+
+    if [[ ! -f "$file_path" ]]; then
+        echo "File not found: $file_path"
+        return 1
+    fi
+
+    node -e "const http=require('node:http');const fs=require('node:fs');const filePath=process.argv[1];const port=Number(process.argv[2]||8080);http.createServer((req,res)=>{const stream=fs.createReadStream(filePath);stream.on('error',()=>{res.statusCode=500;res.end('Failed to read file');});stream.pipe(res);}).listen(port,()=>console.log('http://localhost:'+port));" "$file_path" "$port"
+}
+alias nserve-file="node-serve-file"
