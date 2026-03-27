@@ -14,6 +14,7 @@ A suite of Bash utilities for Node.js developers, **NodeUtils** make use of fuzz
     - [Summarize Node.js Project](#summarize-nodejs-project)
     - [Run Script from package.json](#run-script-from-packagejson)
     - [Serve a Local File over HTTP](#serve-a-local-file-over-http)
+- [npm audit HTML Report](#npm-audit-html-report)
 - [Usage Notes](#usage-notes)
 - [Contribution](#contribution)
 
@@ -114,6 +115,21 @@ node-serve-file [file-path] [port]
 - Defaults to `custom_html.html` when no file path is provided.
 - Defaults to port `8080` when no port is provided.
 - Alias: `nserve-file`
+
+### npm audit HTML Report
+
+Generate a filterable, single-file HTML report from `npm audit --json` output:
+
+```bash
+npm audit --json > audit.json
+nodeutils_npm_audit_html_report audit.json
+```
+
+- Produces `audit-report.html` by default (or a custom output path as the second argument).
+- Includes vulnerability title, package, severity, direct/indirect status, fix availability, and CWEs.
+- Enriches each vulnerability with top-level `package.json` roots that pull it in.
+- Marks each tied root section (`dependencies`, `devDependencies`, or `optionalDependencies`) and reachability (`prod`, `dev-only`, or both).
+- Report is fully offline and self-contained (embedded CSS/JS, no server required).
 
 ## Usage Notes
 

@@ -289,3 +289,30 @@ function node-serve-file() {
     node -e "const http=require('node:http');const fs=require('node:fs');const filePath=process.argv[1];const port=Number(process.argv[2]||8080);http.createServer((req,res)=>{const stream=fs.createReadStream(filePath);stream.on('error',()=>{res.statusCode=500;res.end('Failed to read file');});stream.pipe(res);}).listen(port,()=>console.log('http://localhost:'+port));" "$file_path" "$port"
 }
 alias nserve-file="node-serve-file"
+
+# node-tools nodeutils_npm_audit_html_report: Create HTML report from npm audit JSON
+function nodeutils_npm_audit_html_report() {
+    local audit_file="$1"
+    local output_file="${2:-audit-report.html}"
+
+    if [[ -z "$audit_file" ]]; then
+        echo "Usage: nodeutils_npm_audit_html_report <audit.json> [output.html]"
+        return 1
+    fi
+
+    if [[ ! -f "$audit_file" ]]; then
+        echo "Audit file not found: $audit_file"
+        return 1
+    fi
+
+    if [[ -z "$NODE_UTILS_DIR" ]]; then
+        echo "NODE_UTILS_DIR is not set. Please export NODE_UTILS_DIR to the nodeutils repository root."
+        return 1
+    fi
+
+    python3 "$NODE_UTILS_DIR/python/nodeutils/npm_audit_html_report.py" \
+      --audit "$audit_file" \
+      --package-json "package.json" \
+      --package-lock "package-lock.json" \
+      --output "$output_file"
+}
