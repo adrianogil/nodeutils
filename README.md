@@ -118,14 +118,16 @@ node-serve-file [file-path] [port]
 
 ### npm audit HTML Report
 
-Generate a filterable, single-file HTML report from `npm audit --json` output:
+Generate a filterable, single-file HTML report from the current project's `npm audit --json` output:
 
 ```bash
-npm audit --json > audit.json
-nodeutils_npm_audit_html_report audit.json
+npm-audit-html-report
+# optional custom output
+npm-audit-html-report custom-report.html
 ```
 
-- Produces `audit-report.html` by default (or a custom output path as the second argument).
+- Runs `npm audit --json` for the current directory and writes the output to a temporary file automatically.
+- Produces `audit-report.html` by default (or uses the custom output path argument).
 - Includes vulnerability title, package, severity, direct/indirect status, fix availability, and CWEs.
 - Enriches each vulnerability with top-level `package.json` roots that pull it in.
 - Marks each tied root section (`dependencies`, `devDependencies`, or `optionalDependencies`) and reachability (`prod`, `dev-only`, or both).

@@ -290,24 +290,39 @@ function node-serve-file() {
 }
 alias nserve-file="node-serve-file"
 
-# node-tools nodeutils_npm_audit_html_report: Create HTML report from npm audit JSON
-function nodeutils_npm_audit_html_report() {
-    local audit_file="$1"
-    local output_file="${2:-audit-report.html}"
-
-    if [[ -z "$audit_file" ]]; then
-        echo "Usage: nodeutils_npm_audit_html_report <audit.json> [output.html]"
-        return 1
-    fi
-
-    if [[ ! -f "$audit_file" ]]; then
-        echo "Audit file not found: $audit_file"
-        return 1
-    fi
+# node-tools npm-audit-html-report: Create HTML report from npm audit for current project
+function npm-audit-html-report() {
+    local output_file="${1:-audit-report.html}"
+    local audit_file
 
     if [[ -z "$NODE_UTILS_DIR" ]]; then
         echo "NODE_UTILS_DIR is not set. Please export NODE_UTILS_DIR to the nodeutils repository root."
         return 1
+    fi
+
+    if [[ ! -f "package.json" ]]; then
+        echo "No package.json found in the current directory."
+        return 1
+    fi
+
+    if [[ ! -f "package-lock.json" ]]; then
+        echo "No package-lock.json found in the current directory."
+        return 1
+    fi
+
+    if ! command -v npm >/dev/null 2>&1; then
+        echo "npm command not found in PATH."
+        return 1
+    fi
+
+    audit_file=$(mktemp -t npm-audit-report.XXXXXX.json)
+    if [[ -z "$audit_file" || ! -f "$audit_file" ]]; then
+        echo "Failed to create temporary audit file."
+        return 1
+    fi
+
+    if ! npm audit --json > "$audit_file"; then
+        echo "npm audit reported vulnerabilities or errors; continuing to build report from generated JSON."
     fi
 
     python3 "$NODE_UTILS_DIR/python/nodeutils/npm_audit_html_report.py" \
@@ -315,4 +330,9 @@ function nodeutils_npm_audit_html_report() {
       --package-json "package.json" \
       --package-lock "package-lock.json" \
       --output "$output_file"
+    local rc=$?
+
+    rm -f "$audit_file"
+    return $rc
 }
+alias naudit-html="npm-audit-html-report"
