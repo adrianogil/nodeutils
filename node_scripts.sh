@@ -205,6 +205,27 @@ function npm-outdated-fz() {
 }
 alias nup-fz="npm-outdated-fz"
 
+# node-tools npm-global-upgrade-fz: Fuzzy upgrade of globally installed npm packages
+function npm-global-upgrade-fz() {
+    local selected_package
+
+    if ! command -v npm >/dev/null 2>&1; then
+        echo "npm command not found."
+        return 1
+    fi
+
+    selected_package=$(npm ls -g --depth=0 --parseable 2>/dev/null | tail -n +2 | xargs -n1 basename | default-fuzzy-finder)
+
+    if [[ -z "$selected_package" ]]; then
+        echo "No package selected."
+        return 1
+    fi
+
+    echo "Upgrading global package: $selected_package"
+    npm install -g "${selected_package}@latest"
+}
+alias ngup-fz="npm-global-upgrade-fz"
+
 # node-tools npm-dep-tree: Show dependency tree for a selected package
 function npm-dep-tree() {
     target_package=$1

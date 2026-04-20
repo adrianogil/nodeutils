@@ -13,6 +13,7 @@ A suite of Bash utilities for Node.js developers, **NodeUtils** make use of fuzz
     - [Run Specific Jest Test](#run-specific-jest-test)
     - [Summarize Node.js Project](#summarize-nodejs-project)
     - [Run Script from package.json](#run-script-from-packagejson)
+    - [Upgrade Global npm Package](#upgrade-global-npm-package)
     - [Serve a Local File over HTTP](#serve-a-local-file-over-http)
 - [Usage Notes](#usage-notes)
 - [Contribution](#contribution)
@@ -102,6 +103,17 @@ npm-run-fz
 - Fuzzy-finding interface to select and run a script from `package.json`.
 - Alias: `nrun`
 
+### Upgrade Global npm Package
+
+Invoke with:
+
+```bash
+npm-global-upgrade-fz
+```
+
+- Fuzzy-finding interface to select a globally installed npm package and upgrade it to the latest version.
+- Alias: `ngup-fz`
+
 ### Serve a Local File over HTTP
 
 Invoke with:
@@ -123,4 +135,3 @@ node-serve-file [file-path] [port]
 ## Contribution
 
 Your contributions are welcome! Feel free to extend `nodeutils` by adding new commands or tweaking the existing ones. Ensure you test any changes to maintain the integrity of the utility.
-
