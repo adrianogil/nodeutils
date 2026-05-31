@@ -250,7 +250,21 @@ alias nls="npm-ls-fz"
 
 # node-tools node-modules-clean: Recursively remove node_modules directories
 function node-modules-clean() {
-    local target_dir="${1:-.}"
+    local assume_yes=0
+    local target_dir="."
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -y|--yes)
+                assume_yes=1
+                shift
+                ;;
+            *)
+                target_dir="$1"
+                shift
+                ;;
+        esac
+    done
 
     if [[ ! -d "$target_dir" ]]; then
         echo "Directory not found: $target_dir"
@@ -268,6 +282,19 @@ function node-modules-clean() {
     fi
 
     echo "Deleting ${#module_dirs[@]} node_modules directories under $target_dir..."
+    for module_dir in "${module_dirs[@]}"; do
+        echo "  - ${module_dir}"
+    done
+
+    if [[ "$assume_yes" -ne 1 ]]; then
+        local confirm
+        read -r -p "Continue deleting these directories? [y/N] " confirm
+        if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+            echo "Cancelled."
+            return 1
+        fi
+    fi
+
     for module_dir in "${module_dirs[@]}"; do
         echo "Deleting ${module_dir}"
         rm -r "$module_dir"
