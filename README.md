@@ -128,8 +128,8 @@ npm-audit-html-report custom-report.html
 
 - Runs `npm audit --json` for the current directory and writes the output to a temporary file automatically.
 - Produces `audit-report.html` by default (or uses the custom output path argument).
-- Includes vulnerability title, package, severity, direct/indirect status, fix availability, and CWEs.
-- Enriches each vulnerability with top-level `package.json` roots that pull it in.
+- Includes vulnerability title, vulnerable package, severity, direct/indirect status, fix availability, and CWEs.
+- Shows the linked top-level `package.json` package next to each vulnerable package, including requested version and dependency chain.
 - Marks each tied root section (`dependencies`, `devDependencies`, or `optionalDependencies`) and reachability (`prod`, `dev-only`, or both).
 - Report is fully offline and self-contained (embedded CSS/JS, no server required).
 
@@ -141,4 +141,3 @@ npm-audit-html-report custom-report.html
 ## Contribution
 
 Your contributions are welcome! Feel free to extend `nodeutils` by adding new commands or tweaking the existing ones. Ensure you test any changes to maintain the integrity of the utility.
-
