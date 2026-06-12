@@ -1,11 +1,81 @@
 alias nd="node"
 alias nde='export NODE_ENV=$(echo -e "development\nstaging\nbeta\nproduction" | default-fuzzy-finder) && node'
 alias nv="node --version"
-alias ni="npm install"
 alias nid="npm install --save-dev"
 alias nu="nvm use"
 alias nat="npm audit"
 alias natx="npm audit fix"
+
+function nodeutils-node-modules-size-kib() {
+    if [[ -d "node_modules" ]]; then
+        du -sk node_modules 2>/dev/null | awk '{print $1}'
+    else
+        echo 0
+    fi
+}
+
+function nodeutils-format-kib() {
+    local kib="${1:-0}"
+    awk -v kib="$kib" 'BEGIN {
+        value = kib * 1024
+        split("B KiB MiB GiB TiB", units, " ")
+        unit = 1
+        while (value >= 1024 && unit < 5) {
+            value = value / 1024
+            unit++
+        }
+        if (unit == 1) {
+            printf "%d%s", value, units[unit]
+        } else if (value >= 10) {
+            printf "%.1f%s", value, units[unit]
+        } else {
+            printf "%.2f%s", value, units[unit]
+        }
+    }'
+}
+
+function nodeutils-format-kib-delta() {
+    local delta="${1:-0}"
+    local sign=""
+    local abs_delta="$delta"
+
+    if (( delta > 0 )); then
+        sign="+"
+    elif (( delta < 0 )); then
+        sign="-"
+        abs_delta=$(( -delta ))
+    fi
+
+    printf "%s%s" "$sign" "$(nodeutils-format-kib "$abs_delta")"
+}
+
+function npm-install() {
+    local start_time
+    local end_time
+    local duration
+    local size_before
+    local size_after
+    local size_delta
+    local npm_status
+
+    start_time=$(date +%s)
+    echo "Node: $(node --version)"
+
+    size_before=$(nodeutils-node-modules-size-kib)
+    npm install "$@"
+    npm_status=$?
+    size_after=$(nodeutils-node-modules-size-kib)
+
+    end_time=$(date +%s)
+    duration=$(( end_time - start_time ))
+    size_delta=$(( size_after - size_before ))
+
+    echo "Duration: ${duration}s"
+    echo "node_modules: $(nodeutils-format-kib "$size_after") ($(nodeutils-format-kib-delta "$size_delta"))"
+
+    return "$npm_status"
+}
+alias ni='npm-install'
 
 # node-tools nvm-use-fz: Fuzzy select and use a Node.js version managed by NVM
 function nvm-use-fz() {
