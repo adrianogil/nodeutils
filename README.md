@@ -8,6 +8,7 @@ A suite of Bash utilities for Node.js developers, **NodeUtils** make use of fuzz
 - [Installation](#installation)
 - [Features](#features)
     - [Run JavaScript Files](#run-javascript-files)
+    - [Run TypeScript Files](#run-typescript-files)
     - [Run Node.js Test Files](#run-nodejs-test-files)
     - [List Jest Tests from a File](#list-jest-tests-from-a-file)
     - [Run Specific Jest Test](#run-specific-jest-test)
@@ -48,6 +49,18 @@ node-fz [directory]
 
 - Provides a fuzzy-finding interface to select and run a `.js` file from the specified directory.
 - Alias: `nfz`
+
+### Run TypeScript Files
+
+Invoke with:
+
+```bash
+typescript-fz [directory]
+```
+
+- Provides a fuzzy-finding interface to select and run a `.ts`, `.mts`, or `.cts` file from the specified directory.
+- Uses `tsx` or `ts-node`, preferring local project binaries in `node_modules/.bin`.
+- Alias: `tsfz`
 
 ### Run Node.js Test Files
 

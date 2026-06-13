@@ -137,6 +137,70 @@ function node-fz() {
 }
 alias nfz="node-fz"
 
+function typescript-runner-command() {
+    if [[ -x "./node_modules/.bin/tsx" ]]; then
+        echo "./node_modules/.bin/tsx"
+    elif command -v tsx >/dev/null 2>&1; then
+        command -v tsx
+    elif [[ -x "./node_modules/.bin/ts-node" ]]; then
+        echo "./node_modules/.bin/ts-node"
+    elif command -v ts-node >/dev/null 2>&1; then
+        command -v ts-node
+    else
+        return 1
+    fi
+}
+
+# node-tools typescript-fz: Run a TypeScript file using tsx or ts-node with fuzzy file selection
+function typescript-fz() {
+    # Search for TypeScript script files, ignore node_modules/, let you pick one, then run it.
+    # Usage:
+    #   typescript-fz                 # fuzzy-pick .ts/.mts/.cts in current dir, no args
+    #   typescript-fz src             # fuzzy-pick in ./src, no args
+    #   typescript-fz -- --flag 123   # current dir, pass --flag 123 to script
+    #   typescript-fz src -- arg1 42  # ./src, pass arg1 42 to script
+
+    local target_dir="."
+    local script_args=()
+
+    # If first arg is a directory, treat it as search root
+    if [[ $# -gt 0 && -d "$1" ]]; then
+        target_dir="$1"
+        shift
+    fi
+
+    # Support `--` as separator, but it's optional.
+    if [[ $# -gt 0 ]]; then
+        if [[ "$1" == "--" ]]; then
+            shift
+        fi
+        script_args=("$@")
+    fi
+
+    local target_file
+    target_file=$(find "$target_dir" \
+                    -type f \( -name '*.ts' -o -name '*.mts' -o -name '*.cts' \) \
+                    -not -name '*.d.ts' \
+                    -not -path '*/node_modules/*' \
+                    -print | default-fuzzy-finder)
+
+    if [[ -z "$target_file" ]]; then
+        echo "No file selected."
+        return 1
+    fi
+
+    local runner
+    runner=$(typescript-runner-command)
+    if [[ -z "$runner" ]]; then
+        echo "No TypeScript runner found. Install tsx or ts-node locally or globally."
+        return 1
+    fi
+
+    echo "Running $target_file ${script_args[*]}"
+    "$runner" "$target_file" "${script_args[@]}"
+}
+alias tsfz="typescript-fz"
+
 # node-tools node-project-find: Find Node.js projects (package.json files)
 function node-project-find()
 {
