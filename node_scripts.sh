@@ -298,6 +298,17 @@ function npm-run-fz() {
 }
 alias nrun="npm-run-fz"
 
+# node-tools npm-script-graph: Render package-script dependencies without running scripts
+function npm-script-graph() {
+    if [[ -z "$NODE_UTILS_DIR" ]]; then
+        echo "NODE_UTILS_DIR is not set. Please export NODE_UTILS_DIR to the nodeutils repository root."
+        return 1
+    fi
+
+    python3 "$NODE_UTILS_DIR/python/nodeutils/package_script_graph.py" "$@"
+}
+alias nscript-graph="npm-script-graph"
+
 alias node-install-from-requires="python3 ${NODE_UTILS_DIR}/python/nodeutils/install_all_modules.py"
 
 # node-tools npm-pkg-version-latest: Get the latest version of a npm package

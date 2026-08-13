@@ -14,6 +14,7 @@ A suite of Bash utilities for Node.js developers, **NodeUtils** make use of fuzz
     - [Run Specific Jest Test](#run-specific-jest-test)
     - [Summarize Node.js Project](#summarize-nodejs-project)
     - [Run Script from package.json](#run-script-from-packagejson)
+    - [Render package-script dependencies](#render-package-script-dependencies)
     - [Serve a Local File over HTTP](#serve-a-local-file-over-http)
 - [npm audit HTML Report](#npm-audit-html-report)
 - [Usage Notes](#usage-notes)
@@ -115,6 +116,30 @@ npm-run-fz
 
 - Fuzzy-finding interface to select and run a script from `package.json`.
 - Alias: `nrun`
+
+### Render package-script dependencies
+
+Render the current package's npm script relationships as Mermaid (the default):
+
+```bash
+npm-script-graph
+# save Mermaid output
+npm-script-graph > npm-scripts.mmd
+```
+
+DOT output and custom `package.json` paths are also supported:
+
+```bash
+npm-script-graph --format dot --output npm-scripts.dot
+npm-script-graph ../web/package.json
+```
+
+- Discovers direct `npm run SCRIPT`, `npm run-script SCRIPT`, `npm test`, and `npm start` calls in quoted or chained shell commands.
+- Adds the automatic `pre<name>` and `post<name>` lifecycle relationships when those scripts exist.
+- Arrows mean that invoking the source causes npm to run the target; lifecycle edges are labeled `pre` or `post`.
+- Highlights cycles and missing targets in the graph and prints a warning for each. Empty `scripts` objects produce an empty, valid graph.
+- Reads `package.json` only. It never runs npm or any package script.
+- Alias: `nscript-graph`
 
 ### Serve a Local File over HTTP
 
